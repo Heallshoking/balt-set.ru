@@ -1117,6 +1117,11 @@ async def order_page(category: str = "electrical"):
 @app.get("/admin")
 async def admin_panel():
     """Админ-панель - управление заказами и мастерами"""
+    html_path = Path("static/admin.html")
+    if html_path.exists():
+        return FileResponse(html_path)
+    
+    # Fallback: простая админка если файл не найден
     from fastapi.responses import HTMLResponse
     
     html_content = """
@@ -1362,6 +1367,11 @@ async def admin_panel():
 @app.get("/master")
 async def master_dashboard():
     """Личный кабинет мастера"""
+    html_path = Path("static/master-dashboard.html")
+    if html_path.exists():
+        return FileResponse(html_path)
+    
+    # Fallback: простая страница если файл не найден
     from fastapi.responses import HTMLResponse
     
     html_content = """
