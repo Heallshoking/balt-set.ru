@@ -14,6 +14,10 @@ import json
 import sqlite3
 from pathlib import Path
 
+# 🔥 БАЗОВАЯ ДИРЕКТОРИЯ (для правильных путей на Timeweb)
+BASE_DIR = Path(__file__).resolve().parent
+STATIC_DIR = BASE_DIR / "static"
+
 # Google интеграция
 try:
     from google_sync import init_google_integration, sync_order_to_google
@@ -128,11 +132,11 @@ app.add_middleware(
 )
 
 # Static files - Монтируем только если папка существует
-if Path("static").exists():
-    app.mount("/static", StaticFiles(directory="static"), name="static")
-    print("✅ Static files монтированы через /static")
+if STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+    print(f"✅ Static files монтированы через /static (путь: {STATIC_DIR})")
 else:
-    print("⚠️ Static files НЕ монтированы (папка не найдена)")
+    print(f"⚠️ Static files НЕ монтированы (папка не найдена: {STATIC_DIR})")
 
 # Инициализация БД при старте
 @app.on_event("startup")
@@ -803,7 +807,7 @@ async def root():
 @app.get("/form")
 async def form_page():
     """Простая форма для клиентов"""
-    html_path = Path("static/index.html")
+    html_path = STATIC_DIR / "index.html"
     if not html_path.exists():
         raise HTTPException(status_code=500, detail=f"HTML file not found: {html_path.absolute()}")
     return FileResponse(html_path)
@@ -1117,7 +1121,7 @@ async def order_page(category: str = "electrical"):
 @app.get("/admin")
 async def admin_panel():
     """Админ-панель - управление заказами и мастерами"""
-    html_path = Path("static/admin.html")
+    html_path = STATIC_DIR / "admin.html"
     if html_path.exists():
         return FileResponse(html_path)
     
@@ -1367,7 +1371,7 @@ async def admin_panel():
 @app.get("/master")
 async def master_dashboard():
     """Личный кабинет мастера"""
-    html_path = Path("static/master-dashboard.html")
+    html_path = STATIC_DIR / "master-dashboard.html"
     if html_path.exists():
         return FileResponse(html_path)
     
@@ -1714,7 +1718,7 @@ async def master_dashboard():
 @app.get("/track")
 async def track_master():
     """Отслеживание мастера для клиента"""
-    html_path = Path("static/track.html")
+    html_path = STATIC_DIR / "track.html"
     if not html_path.exists():
         raise HTTPException(status_code=500, detail=f"HTML file not found: {html_path.absolute()}")
     return FileResponse(html_path)
