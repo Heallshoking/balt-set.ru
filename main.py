@@ -1121,11 +1121,7 @@ async def order_page(category: str = "electrical"):
 @app.get("/admin")
 async def admin_panel():
     """Админ-панель - управление заказами и мастерами"""
-    html_path = STATIC_DIR / "admin.html"
-    if html_path.exists():
-        return FileResponse(html_path)
-    
-    # Fallback: простая админка если файл не найден
+    # ✅ Всегда используем fallback HTML (надёжнее для Timeweb)
     from fastapi.responses import HTMLResponse
     
     html_content = """
@@ -1371,11 +1367,7 @@ async def admin_panel():
 @app.get("/master")
 async def master_dashboard():
     """Личный кабинет мастера"""
-    html_path = STATIC_DIR / "master-dashboard.html"
-    if html_path.exists():
-        return FileResponse(html_path)
-    
-    # Fallback: простая страница если файл не найден
+    # ✅ Всегда используем fallback HTML (надёжнее для Timeweb)
     from fastapi.responses import HTMLResponse
     
     html_content = """
@@ -1718,10 +1710,186 @@ async def master_dashboard():
 @app.get("/track")
 async def track_master():
     """Отслеживание мастера для клиента"""
-    html_path = STATIC_DIR / "track.html"
-    if not html_path.exists():
-        raise HTTPException(status_code=500, detail=f"HTML file not found: {html_path.absolute()}")
-    return FileResponse(html_path)
+    # ✅ Всегда используем fallback HTML (надёжнее для Timeweb)
+    from fastapi.responses import HTMLResponse
+    
+    html_content = """
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Отслеживание мастера | AI Service Platform</title>
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                padding: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .container {
+                background: white;
+                border-radius: 20px;
+                padding: 40px;
+                max-width: 500px;
+                width: 100%;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                text-align: center;
+            }
+            h1 { color: #333; margin-bottom: 20px; }
+            p { color: #666; margin-bottom: 15px; }
+            .status { 
+                font-size: 1.2rem; 
+                font-weight: bold;
+                color: #10b981;
+                margin: 20px 0;
+            }
+            #map { 
+                width: 100%; 
+                height: 300px; 
+                border-radius: 10px; 
+                background: #f0f0f0;
+                margin: 20px 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>🗺️ Отслеживание мастера</h1>
+            <p class="status" id="status">Мастер в пути...</p>
+            <div id="map"></div>
+            <p>Вы получите SMS когда мастер подъедет к вам.</p>
+            <p><a href="/">← Вернуться на главную</a></p>
+        </div>
+        <script>
+            // Здесь будет реальная карта с геолокацией
+            document.getElementById('map').innerHTML = '<p style="padding: 130px 0; color: #999;">Карта загружается...</p>';
+        </script>
+    </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content)
+
+@app.get("/ai-chat")
+async def ai_chat():
+    """AI-чат для консультаций"""
+    from fastapi.responses import HTMLResponse
+    
+    html_content = """
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AI Консультант | Умный помощник</title>
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                padding: 20px;
+                display: flex;
+                flex-direction: column;
+            }
+            .header {
+                background: rgba(255,255,255,0.95);
+                padding: 15px 20px;
+                border-radius: 15px 15px 0 0;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+            .header h1 { font-size: 1.5rem; color: #333; }
+            .chat-container {
+                flex: 1;
+                background: white;
+                padding: 20px;
+                overflow-y: auto;
+                min-height: 400px;
+            }
+            .message {
+                margin-bottom: 15px;
+                padding: 12px 18px;
+                border-radius: 18px;
+                max-width: 70%;
+            }
+            .user-message {
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                color: white;
+                margin-left: auto;
+                text-align: right;
+            }
+            .ai-message {
+                background: #f0f0f0;
+                color: #333;
+            }
+            .input-container {
+                background: white;
+                padding: 20px;
+                border-radius: 0 0 15px 15px;
+                box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+                display: flex;
+                gap: 10px;
+            }
+            input {
+                flex: 1;
+                padding: 12px 18px;
+                border: 2px solid #e0e0e0;
+                border-radius: 25px;
+                font-size: 1rem;
+                outline: none;
+            }
+            input:focus { border-color: #667eea; }
+            button {
+                padding: 12px 30px;
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                color: white;
+                border: none;
+                border-radius: 25px;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+            }
+            button:hover { opacity: 0.9; }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h1>🤖 AI Консультант</h1>
+            <p style="color: #666; font-size: 0.9rem;">Задайте вопрос о ваших электрических проблемах</p>
+        </div>
+        <div class="chat-container" id="chatContainer">
+            <div class="message ai-message">Здравствуйте! Я AI-помощник. Опишите вашу проблему, и я помогу подобрать решение.</div>
+        </div>
+        <div class="input-container">
+            <input type="text" id="userInput" placeholder="Напишите ваш вопрос..." onkeypress="if(event.key==='Enter') sendMessage()">
+            <button onclick="sendMessage()">Отправить</button>
+        </div>
+        <script>
+            function sendMessage() {
+                const input = document.getElementById('userInput');
+                const message = input.value.trim();
+                if (!message) return;
+                
+                const chatContainer = document.getElementById('chatContainer');
+                chatContainer.innerHTML += `<div class="message user-message">${message}</div>`;
+                input.value = '';
+                
+                setTimeout(() => {
+                    chatContainer.innerHTML += `<div class="message ai-message">Спасибо за ваш вопрос! Сейчас анализирую проблему...</div>`;
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                }, 500);
+                
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+        </script>
+    </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content)
 
 @app.get("/api")
 async def api_info():
