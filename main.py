@@ -18,13 +18,10 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
 
-# Google интеграция
-try:
-    from google_sync import init_google_integration, sync_order_to_google
-    GOOGLE_SYNC_AVAILABLE = True
-except ImportError:
-    GOOGLE_SYNC_AVAILABLE = False
-    print("⚠️ Google интеграция недоступна (установите: pip install google-api-python-client)")
+# Google интеграция - ОТКЛЮЧЕНА для production
+# (требует OAuth верификации Google)
+GOOGLE_SYNC_AVAILABLE = False
+print("ℹ️ Google интеграция отключена")
 
 # Калькулятор цен
 try:
