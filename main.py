@@ -169,23 +169,13 @@ async def startup_event():
     
     init_database()
     
-    # Инициализация Google интеграции (не блокирует старт)
+    # Инициализация Google интеграции
     if GOOGLE_SYNC_AVAILABLE:
         try:
-            # Запускаем в фоне, чтобы не блокировать приложение
-            import threading
-            def init_google_async():
-                try:
-                    init_google_integration()
-                    print("✅ Google Calendar и Tasks синхронизация активна")
-                except Exception as e:
-                    print(f"⚠️ Google интеграция недоступна: {e}")
-            
-            # Запускаем в отдельном потоке
-            threading.Thread(target=init_google_async, daemon=True).start()
-            print("⏳ Google интеграция инициализируется в фоне...")
+            init_google_integration()
+            print("✅ Google Calendar и Tasks синхронизация активна")
         except Exception as e:
-            print(f"⚠️ Не удалось запустить Google интеграцию: {e}")
+            print(f"⚠️ Google интеграция недоступна: {e}")
     
     print(f"🚀 AI Service Platform запущен (Environment: {ENVIRONMENT})")
 
